@@ -14,7 +14,7 @@ import {AppRegistry} from 'react-native';
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
 import contactStore from './reducers'
-import App from './components'
+import App from './components/app'
 
 let store = createStore(contactStore)
 
