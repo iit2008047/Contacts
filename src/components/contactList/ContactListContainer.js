@@ -8,7 +8,7 @@ import _ from 'lodash';
 import React, {PropTypes} from 'react';
 import ContactList from './ContactList'
 import {connect} from 'react-redux';
-import {loadContacts} from '../actions/contacts'
+import {loadContacts} from '../../actions/contacts'
 
 const makeMapStateToProps = () => {
   return (state, ownProps) => {

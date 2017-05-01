@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AlphabetListView from 'react-native-alphabetlistview';
-import emptyProfileImage from '../img/empty-profile.png'
+import emptyProfileImage from '../../img/empty-profile.png'
 
 import Styles from './ContactList.style'
 
