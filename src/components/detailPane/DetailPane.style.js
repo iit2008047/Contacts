@@ -36,7 +36,7 @@ export default StyleSheet.create({
     fontWeight: '400',
     marginBottom: 15,
   },
-  infoActionContainer:{
+  infoActionContainer: {
     flexDirection: 'row',
     marginBottom: 16
   },
@@ -52,44 +52,50 @@ export default StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: '#50e3c2',
   },
-  iconTextStyle:{
+  iconTextStyle: {
     backgroundColor: 'transparent',
   },
-  detailItemView:{
+  detailItemView: {
     flexDirection: 'row',
     height: 56,
     justifyContent: 'center',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderColor:'#f0f0f0',
+    borderColor: '#f0f0f0',
   },
-  headerView:{
-    flex:1,
+  headerView: {
+    flex: 1,
     alignItems: 'flex-end',
   },
-  valueView:{
-    flex:3,
+  valueView: {
+    flex: 3,
     marginLeft: 16
   },
-  headerText:{
+  headerText: {
     backgroundColor: 'transparent',
     fontSize: 15,
     color: 'grey',
   },
-  valueText:{
+  valueText: {
     backgroundColor: 'transparent',
     fontSize: 15,
     color: 'black',
   },
-  backIcon:{
+  backIcon: {
     marginRight: 3
   },
-  backButtonContainer:{
+  backButtonContainer: {
     flexDirection: 'row',
   },
   centeringIndicator: {
     alignItems: 'center',
     justifyContent: 'center',
-    flex:1
+    flex: 1
   },
+  navigationText: {
+    color: '#50e3c2',
+    fontSize: 16,
+    marginLeft: 5,
+    fontWeight: '500',
+  }
 })

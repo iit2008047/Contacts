@@ -1,13 +1,12 @@
 /**
  * @author: faiz karim
- * @since: 02/05/17
+ * @since: 07/05/17
  */
-
 import {StyleSheet} from 'react-native';
-
 export default StyleSheet.create({
-  navigationBar: {
-    backgroundColor: 'white',
-    borderBottomWidth: 0,
-  },
+  navigationText: {
+    color: '#50e3c2',
+    fontSize: 16,
+    fontWeight: '500',
+  }
 })

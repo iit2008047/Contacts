@@ -14,6 +14,9 @@ import {
   ActivityIndicator
 } from 'react-native';
 import Touchable from'../../atoms/Touchable'
+
+import {TextButton} from'../../utils/navigationUtil'
+
 import Styles from './DetailPane.style'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconEntypo from 'react-native-vector-icons/Entypo';
@@ -33,7 +36,7 @@ class DetailPane extends Component {
 
     Actions.refresh({
       renderBackButton: this._renderBackButton,
-      renderRightButton: this._renderRightButton,
+      renderRightButton: _.partial(TextButton, {onPress: this._onEditPressed.bind(this), text: 'Edit'}),
     });
   }
 
@@ -46,18 +49,8 @@ class DetailPane extends Component {
     return (
       <Touchable onPress={this._onBackPress}>
         <View style={Styles.backButtonContainer}>
-          <IconIonicons name="back" style={Styles.backIcon} size={20} color='#50e3c2'/>
-          <Text>{'Contacts'}</Text>
-        </View>
-      </Touchable>
-    );
-  }
-
-  _renderRightButton = () => {
-    return (
-      <Touchable onPress={this._onEditPressed.bind(this)}>
-        <View>
-          <Text>{'Edit'}</Text>
+          <IconIonicons name='ios-arrow-back-outline' style={Styles.backIcon} size={20} color='#50e3c2'/>
+          <Text style={Styles.navigationText}>{'Contacts'}</Text>
         </View>
       </Touchable>
     );
@@ -81,7 +74,7 @@ class DetailPane extends Component {
 
     return (
       <View style={Styles.container}>
-        <LinearGradient colors={['#F7FBFA','#EDF9F6', '#E0F7F2', '#DEF6F0']} style={Styles.basicInfoContainer}>
+        <LinearGradient colors={['#ffffff','#EDF9F6', '#E0F7F2', '#DEF6F0']} style={Styles.basicInfoContainer}>
           {details && this._renderBasicInfo()}
           {details && this._renderActionInfo()}
         </LinearGradient>
@@ -112,7 +105,7 @@ class DetailPane extends Component {
         <View style={Styles.profileImageContainer}>
           <Image style={Styles.profileImage} source={profileSource}/>
         </View>
-        <Text style={Styles.contactName}>{first_name + last_name}</Text>
+        <Text style={Styles.contactName}>{first_name + ' ' +  last_name}</Text>
       </View>
     )
 
@@ -132,12 +125,22 @@ class DetailPane extends Component {
         <View style={Styles.infoCircularView}>
           <IconEntypo name="mail" size={20} color="white" style={Styles.iconTextStyle}/>
         </View>
-        <View style={[Styles.infoCircularView, {backgroundColor: 'white'},]}>
-          <IconEntypo name={favorite? 'star' : 'star-outlined'} size={20} color={favorite? '#50e3c2' : 'black'}
-            style={Styles.iconTextStyle}/>
-        </View>
+        <Touchable onPress={this._onFavClick.bind(this)}>
+          <View style={[Styles.infoCircularView, {backgroundColor: 'white'},]}>
+            <IconEntypo name={favorite? 'star' : 'star-outlined'} size={20} color={favorite? '#50e3c2' : 'black'}
+              style={Styles.iconTextStyle}/>
+          </View>
+        </Touchable>
+
       </View>
     )
+  }
+
+  _onFavClick(){
+    let {details, updateContact} = this.props;
+    const {favorite} = details;
+    details = _.assign(details, {favorite: !favorite});
+    updateContact && updateContact(details)
   }
 
   _renderContactDetails() {

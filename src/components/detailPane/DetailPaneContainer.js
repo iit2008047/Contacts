@@ -9,6 +9,8 @@ import React, {PropTypes} from 'react';
 import DetailPane from './DetailPane'
 import {connect} from 'react-redux';
 import {getContactDetail} from '../../actions/contacts'
+import {editContact} from '../../actions/contacts'
+
 
 const makeMapStateToProps = () => {
   return ({contactDetail}, ownProps) => {
@@ -25,6 +27,9 @@ const makeMapStateToProps = () => {
 const mapDispatchToProps = (dispatch, ownProps) => ({
   loadDetail() {
     getContactDetail(dispatch, ownProps.id);
+  },
+  updateContact(data) {
+    editContact(dispatch, ownProps.id, data);
   }
 });
 

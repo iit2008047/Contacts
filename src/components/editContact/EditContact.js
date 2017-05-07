@@ -14,6 +14,8 @@ import {
   TextInput
 } from 'react-native';
 import Touchable from'../../atoms/Touchable'
+import {TextButton} from'../../utils/navigationUtil'
+
 import Styles from './EditContact.style'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconEntypo from 'react-native-vector-icons/Entypo';
@@ -41,29 +43,9 @@ class DetailPane extends Component {
     };
 
     Actions.refresh({
-      renderBackButton: this._renderBackButton,
-      renderRightButton: this._renderRightButton,
+      renderBackButton: _.partial(TextButton, {onPress: this._onCancelPress.bind(this), text: 'Cancel'}),
+      renderRightButton: _.partial(TextButton, {onPress: this._onDonePressed.bind(this), text: 'Done'}),
     });
-  }
-
-  _renderBackButton = () => {
-    return (
-      <Touchable onPress={this._onCancelPress}>
-        <View style={Styles.backButtonContainer}>
-          <Text>{'Cancel'}</Text>
-        </View>
-      </Touchable>
-    );
-  }
-
-  _renderRightButton = () => {
-    return (
-      <Touchable onPress={this._onDonePressed.bind(this)}>
-        <View>
-          <Text>{'Done'}</Text>
-        </View>
-      </Touchable>
-    );
   }
 
   _onCancelPress = () => {
@@ -82,7 +64,7 @@ class DetailPane extends Component {
     const {details} = this.props;
     return (
       <View style={Styles.container}>
-        <LinearGradient colors={['#F7FBFA','#EDF9F6', '#E0F7F2', '#DEF6F0']} style={Styles.basicInfoContainer}>
+        <LinearGradient colors={['#ffffff','#EDF9F6', '#E0F7F2', '#DEF6F0']} style={Styles.basicInfoContainer}>
           {details && this._renderProfileImagePlaceHolder()}
         </LinearGradient>
         {details && this._renderContactDetails()}
