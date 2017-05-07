@@ -1,279 +1,118 @@
-/**
- * @author: faiz karim
- * @since: 01/05/17
- */
+import React, { Component, PropTypes } from 'react'
+import {
+  StyleSheet,
+  View,
+  ListView,
+  Text,
+  TouchableOpacity,
+  PanResponder,
+} from 'react-native'
+import _ from 'lodash'
 
-//Native Libraries
-import _ from 'lodash';
-import React, { PropTypes, Component } from 'react';
-import { ListView as RNListView, RecyclerViewBackedScrollView, ActivityIndicator, RefreshControl, Platform, Loader, Text, Image, Touchable, View, ScrollView } from 'react-native';
-
-//Components
-import {Theme, Loader, Text, Image, Touchable, View, ScrollView} from 'native-blocks'
-import { EmptyMessageView } from 'native-components';
-
-//resources
-import emptyContentImage from 'app/img/native/dst_empty_content.png';
-
-//Constants
-import {NO_INTERNET_ERROR, NO_INTERNET_VIEW} from 'lite-app/constants/nativeConstants'
-
-//Styles
-import styles from './ListView.style';
-
-const DefaultListConfig = {
-  initialListSize: 4,
-  pageSize: 1,
-  scrollRenderAheadDistance: 500,
-};
-
-function cloneWithData(dataSource: RNListView.DataSource, data) {
-  if (!data) {
-    return dataSource.cloneWithRows([]);
-  }
-  if (Array.isArray(data)) {
-    return dataSource.cloneWithRows(data);
-  }
-  return dataSource.cloneWithRowsAndSections(data);
-}
-
-function viewHasChanged(v1, v2) {
-  return v1 !== v2;
-}
-
-class ListView extends Component {
-
-  static defaultProps = {
-    mode: 'normal',
-    shouldShowSeparator: true,
-    enableCardView: true,
-    enablePullToRefresh: false,
-    emptyView: ({text: 'No data found', image: emptyContentImage}),
-    errorView: ({text: 'Failed to load', image: emptyContentImage}),
-    isImmutableData: true
-  };
-
+export default class StickySearchList extends Component {
   constructor(props) {
     super(props);
-
-    const { data } = this.props;
-    const dataSource = new RNListView.DataSource({
-      getRowData: (dataBlob, sid, rid) => dataBlob[sid][rid],
-      getSectionHeaderData: (dataBlob, sid) => dataBlob[sid],
-      rowHasChanged: viewHasChanged,
-      sectionHeaderHasChanged: viewHasChanged
-    });
-    this.state = {
-      dataSource: cloneWithData(dataSource, data)
-    };
+    this.panResponder = PanResponder.create({
+      onStartShouldSetPanResponder: this.onShouldSetPanResponder.bind(this),
+      onMoveShouldSetPanResponder: this.onShouldSetPanResponder.bind(this),
+      onPanResponderMove: this.onPanResponderMove.bind(this),
+    })
+    this.dataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.isImmutableData) {
-      const ds = new RNListView.DataSource({
-        getRowData: (dataBlob, sid, rid) => dataBlob[sid][rid],
-        getSectionHeaderData: (dataBlob, sid) => dataBlob[sid],
-        rowHasChanged: viewHasChanged,
-        sectionHeaderHasChanged: viewHasChanged
-      });
-      this.setState({ dataSource: cloneWithData(ds, nextProps.data) });
-    } else if (this.props.data !== nextProps.data) {
-      this.setState({
-        dataSource: cloneWithData(this.state.dataSource, nextProps.data),
-      });
+  onShouldSetPanResponder (e, gesture) {
+    return true
+  }
+
+  onPanResponderMove (e, gesture) {
+    const py = e.nativeEvent.pageY - 50
+    const px = e.nativeEvent.locationX
+
+    const index = Math.floor(py / 30)
+
+    const { data, searchBarWidth = 20 } = this.props
+    if (px > 0 & px < searchBarWidth) {
+      if (index < data.length) {
+        this.listView.scrollTo({y: this[`offsetYFor${_.keys(data[index])[0]}`], animated: false})
+      }
     }
   }
 
-  render() {
-    switch (this.props.mode) {
-      case 'loading':
-        return this._renderLoader();
-      case 'error':
-        return this._renderError();
-      case 'normal':
-      case 'pullToRefresh':
-      case 'loadMore':
-      default:
-        return this._renderList();
-    }
-  }
-
-  _renderList = () => {
-    const rowAndSectionCount = this.state.dataSource.getRowAndSectionCount();
-    if (rowAndSectionCount === 1) {
-      return this._renderEmpty();
-    }
-
-    const { props } = this;
-    const { renderRow, renderSectionHeader, style, shouldShowSeparator, renderHeader, onEndReached, enableCardView, enablePullToRefresh } = props;
-    const backgroundColor = Platform.OS == 'ios' ? ( enableCardView ? Theme.listView.backgroundColorCard : Theme.listView.backgroundColorNormal) : {};
+  _renderRow (data, sectionID, rowID, highlightRow) {
     return (
-      <RNListView
-        ref="listview"
-        style={[styles.listView, {backgroundColor}, style]}
-        dataSource={this.state.dataSource}
-        renderRow={renderRow}
-        renderSectionHeader={renderSectionHeader}
-        initialListSize={DefaultListConfig.initialListSize}
-        pageSize={DefaultListConfig.pageSize}
-        removeClippedSubviews
-        scrollRenderAheadDistance={DefaultListConfig.scrollRenderAheadDistance}
-        enableEmptySections
-        renderSeparator={shouldShowSeparator ? this._renderSeparator : _.noop}
-        renderHeader={renderHeader}
-        renderScrollComponent={prop => <RecyclerViewBackedScrollView {...prop} />}
-        keyboardDismissMode="on-drag"
-        keyboardShouldPersistTaps
-        onEndReached={onEndReached}
-        renderFooter={this._renderFooter}
-        refreshControl={enablePullToRefresh && this._renderRefreshControl()}
-        {...props}/>
-    );
-  };
-
-  _renderLoader = () => {
-    return (
-      <View style={styles.loadingContainer}>
-        <Loader />
+      <View onLayout={this._onCellLayout.bind(this, rowID)}>
+        {this.props.renderRow(data, sectionID, rowID, highlightRow)}
       </View>
-    );
-  };
-
-  _renderError = () => {
-    const {errorView} = this.props,
-      {errorMessage} = errorView;
-    let errorViewObject;
-    switch(errorMessage){
-      case NO_INTERNET_ERROR:
-        errorViewObject = NO_INTERNET_VIEW;
-        break;
-      default:
-        errorViewObject = errorView;
-        break;
-    }
-
-    const {title, description, image} = errorViewObject;
-    const {retryFunc} = this.props.errorView;
-
-    return (
-      <ScrollView contentContainerStyle={{flexGrow: 1}}>
-        <EmptyMessageView containerStyle={styles.errorContainer}
-          image={image}
-          title={title}
-          message={description}
-          retryFunc={retryFunc}/>
-      </ScrollView>
-    );
-  };
-
-  _renderEmpty = () => {
-    const {title, description, image, retryFunc} = this.props.emptyView;
-    return (
-      <EmptyMessageView containerStyle={styles.errorContainer}
-        image={image}
-        title={title}
-        message={description}
-        retryFunc={retryFunc}/>
-    );
-  };
-
-  _renderRefreshControl = () => {
-    const {mode, onPullToRefresh} = this.props;
-    return (
-      <RefreshControl
-        style={styles.refreshControl}
-        tintColor={Theme.text.textLight}
-        refreshing={mode == 'pullToRefresh'}
-        onRefresh={onPullToRefresh}
-      />
-    );
-  };
-
-  _renderFooter = () => {
-    if (this.props.mode == 'loadMore') {
-      return <ActivityIndicator style={{ paddingVertical: 10}} size={'small'}/>;
-    }
-    return <View/>;
-  };
-
-  _renderSeparator = (sectionID, rowID) => {
-    const separatorStyle = this.props.enableCardView ?
-      [styles.separatorCard, { backgroundColor: Theme.listView.backgroundColorCard }] :
-      [styles.separatorNormal, { backgroundColor: Theme.colors.separator }];
-
-    return (
-      <View key={`${sectionID}-${rowID}`} style={separatorStyle}/>
-    );
+    )
   }
 
-  _scrollTo = ({rowId, sectionId, rowHeight, sectionHeight, listHeight}) => {
+  _onCellLayout (index, event) {
+    const { data } = this.props
+    this[`offsetYFor${_.keys(data[index])[0]}`] = event.nativeEvent.layout.y
+  }
 
-    const {data} = this.props;
-    let rowsToScroll = 0, sectionsToScroll = 0, scrollPosition = 0;
+  _handleSwitch (index) {
+    const { data } = this.props
+    this.listView.scrollTo({y: this[`offsetYFor${_.keys(data[index])[0]}`], animated: false})
+  }
 
-    if (typeof data == 'array') {
-      for (rowItem in data) {
-        if (rowId == rowItem.id) {
-          break;
-        }
-        rowsToScroll++;
-      }
-    }
-
-    if (typeof data == 'object') {
-      for (sectionItem in data) {
-        if (sectionItem == sectionId) {
-          break;
-        }
-        sectionsToScroll++;
-
-        for (rowItem in data[sectionItem]) {
-          if (rowId == data[sectionItem][rowItem].id) {
-            break;
+  render () {
+    const {
+      data,
+      searchBarBackgroundColor,
+      searchBarWidth,
+      searchBarTextStyle,
+      } = this.props
+    return (
+      <View style={styles.container}>
+        <ListView
+          ref={ lv => this.listView = lv}
+          dataSource={this.dataSource.cloneWithRows(data)}
+          renderRow={this._renderRow.bind(this)}
+        />
+        <View
+          {...this.panResponder.panHandlers}
+          style={[
+            styles.searchBar,
+            searchBarBackgroundColor ? { backgroundColor: searchBarBackgroundColor } : {},
+            searchBarWidth ? { width: searchBarWidth } : {}
+          ]}
+        >
+          {
+            _.map(data, (item, index) => (
+              <TouchableOpacity onPress={this._handleSwitch.bind(this, index)} key={index} style={styles.searchBarItem}>
+                <Text style={[{ fontSize: 10 }, searchBarTextStyle]}>{_.keys(item)[0]}</Text>
+              </TouchableOpacity>)
+            )
           }
-          rowsToScroll++;
-        }
-      }
-    }
-
-    scrollPosition = (rowsToScroll * rowHeight) + (sectionsToScroll * sectionHeight);
-
-    if (!rowId && !sectionId) {
-      scrollPosition = scrollPosition - listHeight;
-    }
-    this.refs.listview.scrollTo({ y: scrollPosition });
-  };
+        </View>
+      </View>
+    )
+  }
 }
 
-ListView.propTypes = {
-  data: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+StickySearchList.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.object),
+  searchBarBackgroundColor: PropTypes.string,
+  searchBarWidth: PropTypes.number,
+  searchBarTextStyle: PropTypes.object,
   renderRow: PropTypes.func.isRequired,
-  renderHeader: PropTypes.func,
-  renderSectionHeader: PropTypes.func,
-  style: PropTypes.object,
+}
 
-  onEndReached: PropTypes.func,
-  onPullToRefresh: PropTypes.func,
-
-  mode: PropTypes.oneOf(['normal', 'pullToRefresh', 'loadMore', 'loading', 'error']).isRequired,
-
-  emptyView: PropTypes.shape({
-    title: PropTypes.string,
-    description: PropTypes.string,
-    image: PropTypes.object,
-    retryFunc: PropTypes.func
-  }),
-  errorView: PropTypes.shape({
-    title: PropTypes.string,
-    description: PropTypes.string,
-    image: PropTypes.object,
-    retryFunc: PropTypes.func
-  }),
-
-  enablePullToRefresh: PropTypes.bool,
-  shouldShowSeparator: PropTypes.bool,
-  enableCardView: PropTypes.bool,
-
-};
-
-export default ListView;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  searchBar: {
+    width: 10,
+    position: 'absolute',
+    top: 50,
+    right: 2,
+    borderRadius: 5,
+  },
+  searchBarItem: {
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+})
