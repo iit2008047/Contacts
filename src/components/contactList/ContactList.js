@@ -79,7 +79,9 @@ class ContactList extends Component {
 
     return (
       <View>
-        <Text style={{ fontSize: 22 }}>{_.keys(data)[0]}</Text>
+        <View style={Styles.sectionView}>
+          <Text style={Styles.sectionText}>{_.keys(data)[0]}</Text>
+        </View>
         <View>
           {_.map(_.values(data)[0], (item) => this.renderItem(item))}
         </View>
@@ -97,7 +99,7 @@ class ContactList extends Component {
           <View style={Styles.profileImageContainer}>
             <Image style={Styles.profileImage} source={profileSource}/>
           </View>
-          <Text>{first_name + last_name}</Text>
+          <Text style={Styles.profileName}>{first_name + ' ' +last_name}</Text>
           <View style={Styles.starContainer}>
             {favorite && <Icon name="star" size={20} color="#50e3c2"/>}
           </View>

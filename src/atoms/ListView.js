@@ -81,7 +81,7 @@ export default class StickySearchList extends Component {
           {
             _.map(data, (item, index) => (
               <TouchableOpacity onPress={this._handleSwitch.bind(this, index)} key={index} style={styles.searchBarItem}>
-                <Text style={[{ fontSize: 10 }, searchBarTextStyle]}>{_.keys(item)[0]}</Text>
+                <Text style={[{ fontSize: 10, color: 'grey' }, searchBarTextStyle]}>{_.keys(item)[0]}</Text>
               </TouchableOpacity>)
             )
           }

@@ -28,10 +28,12 @@ export default StyleSheet.create({
     width: 44,
   },
   profileCell: {
-    padding: 20,
+    paddingVertical: 8,
+    marginHorizontal: 18,
     flexDirection: 'row',
-    alignItems:'center'
-
+    alignItems:'center',
+    borderBottomWidth: 1,
+    borderColor:'#f0f0f0',
   },
   starContainer: {
     flex:1,
@@ -43,4 +45,19 @@ export default StyleSheet.create({
     justifyContent: 'center',
     flex:1
   },
+  sectionView:{
+    backgroundColor: '#e8e8e8'
+  },
+  sectionText:{
+    marginVertical: 5,
+    marginLeft: 20,
+    color: 'black',
+    fontSize:14,
+    fontWeight: '700',
+  },
+  profileName:{
+    color: 'black',
+    fontSize:14,
+    fontWeight: '600',
+  }
 });
