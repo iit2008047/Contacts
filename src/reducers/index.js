@@ -6,8 +6,10 @@
 
 import {combineReducers} from 'redux';
 import contacts from './contacts';
+import contactDetail from './contactDetail';
 
 
 export default combineReducers( {
-  contacts
+  contacts,
+  contactDetail
 });

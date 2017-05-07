@@ -14,4 +14,6 @@ function buildLoadContactsReqParams(url, data, params) {
 
 export default {
   loadContacts: (url, data, params = {}) => handleAction(buildLoadContactsReqParams(url, data, params), 'get'),
+  loadDetail: (url, data, params = {}) => handleAction(buildLoadContactsReqParams(url, data, params), 'get'),
+  updateContact: (url, data, params = {}) => handleAction(buildLoadContactsReqParams(url, data, params), 'put'),
 }

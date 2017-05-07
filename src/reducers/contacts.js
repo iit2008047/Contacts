@@ -3,7 +3,7 @@
  * @since: 30/04/17
  */
 
-import {CONTACTS_FAILED, CONTACTS_LOADING, CONTACTS_LOADED} from '../actions/actionTypes'
+import {CONTACTS_FAILED, CONTACTS_LOADING, CONTACTS_LOADED, CONTACTS_UPDATED} from '../actions/actionTypes'
 import update from 'immutability-helper';
 
 const initialState = {
@@ -11,7 +11,8 @@ const initialState = {
   contactList: [],
   metadata: {
     isLoading: false,
-    isFailed: false
+    isFailed: false,
+    hasUpdated: false
   },
 };
 
@@ -23,6 +24,7 @@ export default function (state = initialState, action) {
         metadata: {
           isLoading: { $set: false },
           isFailed: { $set: false },
+          hasUpdated: { $set: false },
         }
       });
 
@@ -31,6 +33,7 @@ export default function (state = initialState, action) {
         metadata: {
           isLoading: { $set: true },
           isFailed: { $set: false },
+          hasUpdated: { $set: false },
         }
       });
 
@@ -39,6 +42,13 @@ export default function (state = initialState, action) {
         metadata: {
           isFailed: { $set: true },
           isLoading: { $set: false },
+        }
+      });
+
+    case CONTACTS_UPDATED:
+      return update(state, {
+        metadata: {
+          hasUpdated: { $set: true },
         }
       });
     default:
