@@ -4,6 +4,9 @@
  */
 
 import contactService from './service/contacts'
+import Toast from 'react-native-root-toast';
+
+import {showToast} from '../utils/toast'
 import _ from 'lodash';
 import {CONTACTS_FAILED,
   CONTACTS_LOADING,
@@ -62,6 +65,7 @@ export const editContact = (dispatch, id, data) => {
   });
 
   const detailUrl = `/contacts/${id}.json`
+
   return contactService.updateContact(detailUrl, data)
     .then(response => {
 
@@ -76,6 +80,32 @@ export const editContact = (dispatch, id, data) => {
       });
 
     }, (error) => {
+      dispatch({
+        type: DETAIL_FAILED,
+      });
+    })
+}
+
+export const addContact = (dispatch, data) => {
+
+
+  const detailUrl = `/contacts.json`
+  return contactService.addContact(detailUrl, data)
+    .then(response => {
+      const {id} = response;
+      dispatch({
+        type: CONTACTS_UPDATED,
+      });
+
+      dispatch({
+        type: DETAIL_LOADED,
+        item: response,
+        id
+      });
+
+    }).catch(function(e) {
+
+      showToast(e.errors[0]);
       dispatch({
         type: DETAIL_FAILED,
       });

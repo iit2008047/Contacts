@@ -24,7 +24,7 @@ export const phoneCallUtil = function (phoneNumber) {
 }
 
 
-export const smsUtil = function (phoneNumber = null) {
+export const smsUtil = function (phoneNumber) {
   let url = 'sms:';
   url += phoneNumber;
   LaunchURL(url);

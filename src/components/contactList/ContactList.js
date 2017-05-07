@@ -14,9 +14,12 @@ import {
 
 import Touchable from'../../atoms/Touchable'
 import Icon from 'react-native-vector-icons/FontAwesome';
+import IconIonicons from 'react-native-vector-icons/Ionicons';
 
 import StickySearchList from '../../atoms/ListView'
 import {Actions} from 'react-native-router-flux';
+import {TextButton} from'../../utils/navigationUtil'
+
 
 import emptyProfileImage from '../../img/empty-profile.png'
 
@@ -50,6 +53,26 @@ class ContactList extends Component {
   componentDidMount() {
     const {loadContacts} = this.props;
     loadContacts();
+
+    Actions.refresh({
+      renderBackButton: _.partial(TextButton, { text: 'Groups' }),
+      renderRightButton: this._renderRightButton.bind(this),
+    });
+  }
+
+  _renderRightButton() {
+    return (
+      <Touchable onPress={this._onAddPress}>
+        <View style={Styles.backButtonContainer}>
+          <IconIonicons name='md-add' style={Styles.backIcon} size={25} color='#50e3c2'/>
+        </View>
+      </Touchable>
+    );
+  }
+
+  _onAddPress() {
+    Actions.EditContact({ id: null, details: {} });
+
   }
 
   componentWillReceiveProps(nextProps) {
@@ -99,7 +122,7 @@ class ContactList extends Component {
           <View style={Styles.profileImageContainer}>
             <Image style={Styles.profileImage} source={profileSource}/>
           </View>
-          <Text style={Styles.profileName}>{first_name + ' ' +last_name}</Text>
+          <Text style={Styles.profileName}>{first_name + ' ' + last_name}</Text>
           <View style={Styles.starContainer}>
             {favorite && <Icon name="star" size={20} color="#50e3c2"/>}
           </View>

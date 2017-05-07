@@ -32,13 +32,13 @@ import placeholder_photo from '../../img/placeholder_photo.png'
 class DetailPane extends Component {
 
   constructor(props) {
-    super(props);
+  super(props);
 
-    Actions.refresh({
-      renderBackButton: this._renderBackButton,
-      renderRightButton: _.partial(TextButton, {onPress: this._onEditPressed.bind(this), text: 'Edit'}),
-    });
-  }
+  Actions.refresh({
+    renderBackButton: this._renderBackButton,
+    renderRightButton: _.partial(TextButton, {onPress: this._onEditPressed.bind(this), text: 'Edit'}),
+  });
+}
 
   componentDidMount() {
     const {loadDetail} = this.props;
@@ -49,7 +49,7 @@ class DetailPane extends Component {
     return (
       <Touchable onPress={this._onBackPress}>
         <View style={Styles.backButtonContainer}>
-          <IconIonicons name='ios-arrow-back-outline' style={Styles.backIcon} size={20} color='#50e3c2'/>
+          <IconIonicons name='ios-arrow-back-outline' style={Styles.backIcon} size={25} color='#50e3c2'/>
           <Text style={Styles.navigationText}>{'Contacts'}</Text>
         </View>
       </Touchable>
@@ -116,15 +116,24 @@ class DetailPane extends Component {
     const {phone_number, email, favorite} = this.props.details;
     return (
       <View style={Styles.infoActionContainer}>
-        <View style={Styles.infoCircularView}>
-          <IconEntypo name="message" size={20} color="white" style={Styles.iconTextStyle}/>
-        </View>
-        <View style={Styles.infoCircularView}>
-          <Icon name="phone" size={20} color="white" style={Styles.iconTextStyle}/>
-        </View>
-        <View style={Styles.infoCircularView}>
-          <IconEntypo name="mail" size={20} color="white" style={Styles.iconTextStyle}/>
-        </View>
+        <Touchable onPress={this._onMessageClick.bind(this)}>
+          <View style={Styles.infoCircularView}>
+            <IconEntypo name="message" size={20} color="white" style={Styles.iconTextStyle}/>
+          </View>
+        </Touchable>
+
+        <Touchable onPress={this._onPhoneClick.bind(this)}>
+          <View style={Styles.infoCircularView}>
+            <Icon name="phone" size={20} color="white" style={Styles.iconTextStyle}/>
+          </View>
+        </Touchable>
+
+        <Touchable onPress={this._onMailClick.bind(this)}>
+          <View style={Styles.infoCircularView}>
+            <IconEntypo name="mail" size={20} color="white" style={Styles.iconTextStyle}/>
+          </View>
+        </Touchable>
+
         <Touchable onPress={this._onFavClick.bind(this)}>
           <View style={[Styles.infoCircularView, {backgroundColor: 'white'},]}>
             <IconEntypo name={favorite? 'star' : 'star-outlined'} size={20} color={favorite? '#50e3c2' : 'black'}
@@ -134,6 +143,21 @@ class DetailPane extends Component {
 
       </View>
     )
+  }
+
+  _onMessageClick(){
+    const {phone_number} = this.props.details;
+    smsUtil(phone_number);
+  }
+
+  _onPhoneClick(){
+    const {phone_number} = this.props.details;
+    phoneCallUtil(phone_number);
+  }
+
+  _onMailClick(){
+    const {email} = this.props.details;
+    emailUtil(email);
   }
 
   _onFavClick(){

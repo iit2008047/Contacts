@@ -95,6 +95,7 @@ export default StyleSheet.create({
   navigationText: {
     color: '#50e3c2',
     fontSize: 16,
+    marginTop: 2,
     marginLeft: 5,
     fontWeight: '500',
   }

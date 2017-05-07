@@ -70,8 +70,8 @@ _addAttachments = (req, data) => {
 
       //2- execute request
       req.end((error, response) => {
-        if (error && error.timeout) {
-          reject(_get(error.response, 'error'));
+        if (error) {
+          reject(_get(error.response, 'body'));
         }
         //3- pass through interceptors if exist
         if (interceptor) {
