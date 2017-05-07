@@ -16,13 +16,20 @@ import { createStore } from 'redux'
 import contactStore from './reducers'
 import App from './components/app'
 
+import { Tester, TestHookStore } from 'cavy';
+import ContactListSpec from './testSpecs/ContactListSpecs';
+
 let store = createStore(contactStore)
+
+const testHookStore = new TestHookStore();
 
 class Root extends Component {
   render() {
     return (
       <Provider store={store}>
-        <App />
+        <Tester specs={[ContactListSpec]} store={testHookStore} waitTime={1000}>
+          <App />
+        </Tester>
       </Provider>
     )
   }

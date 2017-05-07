@@ -19,6 +19,7 @@ import IconIonicons from 'react-native-vector-icons/Ionicons';
 import StickySearchList from '../../atoms/ListView'
 import {Actions} from 'react-native-router-flux';
 import {TextButton} from'../../utils/navigationUtil'
+import { hook } from 'cavy';
 
 
 import emptyProfileImage from '../../img/empty-profile.png'
@@ -118,7 +119,7 @@ class ContactList extends Component {
     const profileSource = profile_pic === '/images/missing.png' ? emptyProfileImage : { uri: profile_pic };
     return (
       <Touchable onPress={_.partial(this._onContactPress, id)}>
-        <View style={Styles.profileCell}>
+          <View style={Styles.profileCell}>
           <View style={Styles.profileImageContainer}>
             <Image style={Styles.profileImage} source={profileSource}/>
           </View>
@@ -150,4 +151,4 @@ class ContactList extends Component {
   }
 }
 
-export default ContactList;
+export default hook(ContactList);
