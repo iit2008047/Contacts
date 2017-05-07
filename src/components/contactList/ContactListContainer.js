@@ -17,7 +17,8 @@ const makeMapStateToProps = () => {
     return {
       contactList: _.sortBy(contacts.contactList, 'first_name'),
       isLoading: metadata.isLoading,
-      isFailed: metadata.isFailed
+      isFailed: metadata.isFailed,
+      hasUpdated: metadata.hasUpdated
     };
   }
 };
@@ -25,11 +26,7 @@ const makeMapStateToProps = () => {
 const mapDispatchToProps = (dispatch, ownProps) => ({
   loadContacts(stream, params = {}) {
     loadContacts(dispatch);
-  },
-
-  clearContacts() {
-    // dispatch(clearMessages(STREAM_ITEMS_CLEAR, streamId));
-  },
+  }
 });
 
 export default connect(

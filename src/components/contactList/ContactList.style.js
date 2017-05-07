@@ -18,7 +18,7 @@ export default StyleSheet.create({
   profileImageContainer: {
     height      : 46,
     width       : 46,
-    borderColor : 'black',
+    borderColor : 'white',
     borderRadius: 23,
     borderWidth : 1,
     marginRight: 12
@@ -31,10 +31,16 @@ export default StyleSheet.create({
     padding: 20,
     flexDirection: 'row',
     alignItems:'center'
+
   },
   starContainer: {
     flex:1,
     justifyContent: 'flex-end',
     alignItems:'flex-end'
-  }
+  },
+  centeringIndicator: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex:1
+  },
 });

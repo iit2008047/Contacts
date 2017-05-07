@@ -8,18 +8,25 @@ import _ from 'lodash';
 import {
   Text,
   View,
-  ListView,
-  Image
+  Image,
+  ActivityIndicator
 } from 'react-native';
+
+import Touchable from'../../atoms/Touchable'
 import Icon from 'react-native-vector-icons/FontAwesome';
-import AlphabetListView from 'react-native-alphabetlistview';
+
+import StickySearchList from '../../atoms/ListView'
+import {Actions} from 'react-native-router-flux';
+
 import emptyProfileImage from '../../img/empty-profile.png'
 
 import Styles from './ContactList.style'
 
 
 function senetizeContactList(list) {
-  let _channelAccounts = {};
+  let _channelAccounts = {},
+    arrayItem = [];
+
 
   _.forEach(list, (item) => {
     const firstName = _.get(item, 'first_name');
@@ -29,77 +36,92 @@ function senetizeContactList(list) {
     }
     _channelAccounts[arraySection].push(item);
   });
-  return _channelAccounts;
-}
 
-class Cell extends Component {
-  render() {
-    const {first_name, last_name, profile_pic, favorite} = this.props.item;
-
-    const profileSource = profile_pic === '/images/missing.png' ? emptyProfileImage : {uri: profile_pic};
-    return (
-      <View style={Styles.profileCell}>
-        <View style={Styles.profileImageContainer}>
-          <Image style={Styles.profileImage}  source={profileSource}/>
-        </View>
-        <Text>{first_name + last_name}</Text>
-        <View style={Styles.starContainer}>
-          {favorite && <Icon name="star" size={20} color="#4F8EF7" />}
-        </View>
-
-      </View>
-    );
-  }
-}
-
-class SectionHeader extends Component {
-  render() {
-    return (
-      <View style={Styles.viewStyle}>
-        <Text style={Styles.textStyle}>{this.props.title}</Text>
-      </View>
-    );
-  }
-}
-
-class SectionItem extends Component {
-  render() {
-    return (
-      <View>
-        <Text style={{color:'#f00'}}>{this.props.title}</Text>
-      </View>
-    );
-  }
+  _.forEach(_channelAccounts, function (value, key) {
+    arrayItem.push({ [key]: value });
+  });
+  return arrayItem;
 }
 
 class ContactList extends Component {
 
   static displayName = 'ContactList';
 
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     const {loadContacts} = this.props;
     loadContacts();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {hasUpdated, loadContacts} = this.props;
+    hasUpdated && loadContacts();
   }
 
   render() {
 
     const {contactList, isLoading, isFailed} = this.props;
 
+    if (isLoading) {
+      return this._renderLoader();
+    }
+
     const groupedData = senetizeContactList(contactList);
+
     return (
-      <AlphabetListView
+      <StickySearchList
         data={groupedData}
-        cell={Cell}
-        cellHeight={50}
-        sectionListItem={SectionItem}
-        sectionHeader={SectionHeader}
-        sectionHeaderHeight={50}
+        renderRow={this._renderRow.bind(this)}
       />
     );
+  }
+
+  _renderRow(data, sectionID, rowID, highlightRow) {
+
+    return (
+      <View>
+        <Text style={{ fontSize: 22 }}>{_.keys(data)[0]}</Text>
+        <View>
+          {_.map(_.values(data)[0], (item) => this.renderItem(item))}
+        </View>
+      </View>
+    )
+  }
+
+  renderItem(item) {
+    const {first_name, last_name, profile_pic, favorite, id} = item;
+
+    const profileSource = profile_pic === '/images/missing.png' ? emptyProfileImage : { uri: profile_pic };
+    return (
+      <Touchable onPress={_.partial(this._onContactPress, id)}>
+        <View style={Styles.profileCell}>
+          <View style={Styles.profileImageContainer}>
+            <Image style={Styles.profileImage} source={profileSource}/>
+          </View>
+          <Text>{first_name + last_name}</Text>
+          <View style={Styles.starContainer}>
+            {favorite && <Icon name="star" size={20} color="#50e3c2"/>}
+          </View>
+
+        </View>
+      </Touchable>
+
+    );
+  }
+
+  _onContactPress(id) {
+    Actions.DetailPane({ id });
+  }
+
+  _renderLoader() {
+    return (
+      <View style={Styles.centeringIndicator}>
+        <ActivityIndicator
+          animating={true}
+          style={[Styles.centeringIndicator, {height: 80}]}
+          size="large"
+        />
+      </View>
+    )
   }
 }
 
