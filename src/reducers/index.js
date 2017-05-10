@@ -9,7 +9,7 @@ import contacts from './contacts';
 import contactDetail from './contactDetail';
 
 
-export default combineReducers( {
+export default combineReducers({
   contacts,
   contactDetail
 });

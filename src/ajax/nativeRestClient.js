@@ -66,7 +66,7 @@ _addAttachments = (req, data) => {
       _reject = reject;
 
       //1- check internet connection
-      //!NetInfoUtil.isInternetConnected() && reject(NO_INTERNET_ERROR);
+      !NetInfoUtil.isInternetConnected() && reject(NO_INTERNET_ERROR);
 
       //2- execute request
       req.end((error, response) => {

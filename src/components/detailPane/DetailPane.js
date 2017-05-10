@@ -118,7 +118,7 @@ class DetailPane extends Component {
     const {phone_number, email, favorite} = this.props.details;
     return (
       <View style={Styles.infoActionContainer}>
-        <Touchable ref={this.props.generateTestHook('ActionBar.EmailButton')} onPress={this._onMessageClick.bind(this)}>
+        <Touchable onPress={this._onMessageClick.bind(this)}>
           <View style={Styles.infoCircularView}>
             <IconEntypo name="message" size={20} color="white" style={Styles.iconTextStyle}/>
           </View>
@@ -194,4 +194,5 @@ class DetailPane extends Component {
 
 }
 
-export default hook(DetailPane);
+export default DetailPane;
+//export default hook(DetailPane);
